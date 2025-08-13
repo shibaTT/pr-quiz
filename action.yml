@@ -8,7 +8,7 @@ branding:
   color: blue
 
 inputs:
-  github-token:
+  quiz-github-token:
     description: GitHub token for API access
     required: true
   openai-api-key:
@@ -70,7 +70,7 @@ runs:
       shell: bash
       working-directory: ${{ github.action_path }}
       env:
-        INPUT_GITHUB_TOKEN: ${{ inputs.github-token }}
+        INPUT_GITHUB_TOKEN: ${{ inputs.quiz-github-token }}
         INPUT_OPENAI_API_KEY: ${{ inputs.openai-api-key }}
         INPUT_NGROK_AUTHTOKEN: ${{ inputs.ngrok-authtoken }}
         INPUT_LINES_CHANGED_THRESHOLD: ${{ inputs.lines-changed-threshold }}

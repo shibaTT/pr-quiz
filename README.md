@@ -54,7 +54,7 @@ jobs:
         id: serve-quiz
         uses: dkamm/pr-quiz@v0.1.0
         with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
+          github-token: ${{ secrets.QUIZ_GITHUB_TOKEN }}
           openai-api-key: ${{ secrets.OPENAI_API_KEY }}
           ngrok-authtoken: ${{ secrets.NGROK_AUTHTOKEN }}
 ```
