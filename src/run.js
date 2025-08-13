@@ -1,7 +1,7 @@
 import * as core from '@actions/core'
 import * as github from '@actions/github'
 import { Octokit } from '@octokit/rest'
-import OpenAI from 'openai'
+// import OpenAI from 'openai'（OpenAI依存を削除）
 import Server from './web/Server.js'
 import createApp from './web/createApp.js'
 import QuizMaker from './quiz/QuizMaker.js'
@@ -19,7 +19,7 @@ async function run() {
   // Have to use process.env because inputs are not passed through to underlying steps for composite actions.
   const config = {
     githubToken: process.env.INPUT_GITHUB_TOKEN,
-    openaiApiKey: process.env.INPUT_OPENAI_API_KEY,
+    // openaiApiKey: process.env.INPUT_OPENAI_API_KEY,（OpenAI APIキー不要）
     ngrokAuthToken: process.env.INPUT_NGROK_AUTHTOKEN,
     linesChangedThreshold: parseInt(process.env.INPUT_LINES_CHANGED_THRESHOLD),
     maxAttempts: parseInt(process.env.INPUT_MAX_ATTEMPTS),
@@ -35,12 +35,7 @@ async function run() {
     )
     process.exit(1)
   }
-  if (!config.openaiApiKey) {
-    core.setFailed(
-      '🚫 OpenAI API key is required. Double check your workflow configuration.'
-    )
-    process.exit(1)
-  }
+  // OpenAI APIキーのチェック不要
   if (!config.ngrokAuthToken) {
     core.setFailed(
       '🚫 Ngrok auth token is required. Double check your workflow configuration.'
@@ -51,10 +46,22 @@ async function run() {
   // Create Github client
   const octokit = new Octokit({ auth: config.githubToken })
 
-  // Create OpenAI client
-  const openai = new OpenAI({
-    apiKey: config.openaiApiKey
-  })
+  // GitHub Copilot AI Model用のクライアント
+  const githubAIFetch = async (body) => {
+    const res = await fetch('https://api.githubcopilot.com/v1/completions', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${config.githubToken}`,
+        'X-Requested-With': 'GitHubAction'
+      },
+      body: JSON.stringify(body)
+    })
+    if (!res.ok) {
+      throw new Error(`GitHub AI Model API error: ${res.status} ${await res.text()}`)
+    }
+    return res.json()
+  }
 
   // Fetch the pull request
   const pullRequest = await fetchPullRequest(
@@ -78,7 +85,7 @@ async function run() {
   }
 
   // Create quiz maker
-  const quizMaker = new QuizMaker(config.model, openai, config.systemPrompt)
+  const quizMaker = new QuizMaker(config.model, githubAIFetch, config.systemPrompt)
 
   // Generate quiz for pull request
   core.info('🤖 Generating quiz...')
