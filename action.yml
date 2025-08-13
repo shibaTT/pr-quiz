@@ -1,7 +1,7 @@
-name: PR Quiz
+name: shibaTT/PR Quiz
 description:
   A GitHub Action that uses AI to generate a quiz based on a pull request
-author: dkamm
+author: shibaTT
 
 branding:
   icon: cpu
