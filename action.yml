@@ -13,7 +13,7 @@ inputs:
     required: true
   openai-api-key:
     description: OpenAI API key for API access
-    required: true
+    required: false
   ngrok-authtoken:
     description: The ngrok authtoken to use for the server hosting the quiz.
     required: true
