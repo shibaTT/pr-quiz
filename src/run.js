@@ -52,13 +52,15 @@ async function run() {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': `Bearer ${config.githubToken}`,
+        Authorization: `Bearer ${config.githubToken}`,
         'X-Requested-With': 'GitHubAction'
       },
       body: JSON.stringify(body)
     })
     if (!res.ok) {
-      throw new Error(`GitHub AI Model API error: ${res.status} ${await res.text()}`)
+      throw new Error(
+        `GitHub AI Model API error: ${res.status} ${await res.text()}`
+      )
     }
     return res.json()
   }
@@ -85,7 +87,11 @@ async function run() {
   }
 
   // Create quiz maker
-  const quizMaker = new QuizMaker(config.model, githubAIFetch, config.systemPrompt)
+  const quizMaker = new QuizMaker(
+    config.model,
+    githubAIFetch,
+    config.systemPrompt
+  )
 
   // Generate quiz for pull request
   core.info('🤖 Generating quiz...')
